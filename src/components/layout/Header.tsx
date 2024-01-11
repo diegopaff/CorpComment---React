@@ -3,10 +3,11 @@ import Logo from "../Logo";
 import PageHeading from "../PageHeading";
 import Pattern from "../Pattern";
 
-type HeaderProps = {
-  handleAddToList: (text: string) => void;
-};
-function Header({ handleAddToList }: HeaderProps) {
+import { useFeedbackItemsContext } from "../../hooks/useFeedbackItemsContext";
+
+function Header() {
+  const { handleAddToList } = useFeedbackItemsContext();
+
   return (
     <header>
       <Pattern />
