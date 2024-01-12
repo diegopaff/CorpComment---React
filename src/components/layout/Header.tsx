@@ -3,17 +3,18 @@ import Logo from "../Logo";
 import PageHeading from "../PageHeading";
 import Pattern from "../Pattern";
 
-import { useFeedbackItemsContext } from "../../hooks/useFeedbackItemsContext";
+import { useFeedbackItemsStore } from "../../stores/feedbackItemsStore";
 
 function Header() {
-  const { handleAddToList } = useFeedbackItemsContext();
+  const addItemToList = useFeedbackItemsStore((state) => state.addItemToList);
+  //const { handleAddToList } = useFeedbackItemsContext();
 
   return (
     <header>
       <Pattern />
       <Logo />
       <PageHeading />
-      <FeedbackForm onAddToList={handleAddToList} />
+      <FeedbackForm onAddToList={addItemToList} />
     </header>
   );
 }
