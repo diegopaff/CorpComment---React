@@ -1,6 +1,7 @@
-import { createContext, useEffect, useMemo, useState } from "react";
+import { createContext, useMemo, useState } from "react";
 import { TFeedbackItem } from "../lib/types";
 import { GET_FEEDBACKS_URL } from "../lib/constants";
+import useFeedbakItems from "../hooks/useFeedbakItems";
 
 type FeedbackItemsContextProviderProps = {
   children: React.ReactNode;
@@ -15,15 +16,15 @@ type TFeedbackItemsContextProvider = {
   handleAddToList: (text: string) => void;
   handleSelectCompany: (company: string) => void;
 };
+
 export const FeedbackItemsContext =
   createContext<TFeedbackItemsContextProvider | null>(null);
 
 function FeedbackItemsContextProvider({
   children,
 }: FeedbackItemsContextProviderProps) {
-  const [feedbackItems, setFeedbackItems] = useState<TFeedbackItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const { feedbackItems, loading, errorMessage, setFeedbackItems } =
+    useFeedbakItems();
   const [selectedCompany, setSelectedCompany] = useState("");
 
   const companyList = useMemo(
@@ -53,7 +54,7 @@ function FeedbackItemsContextProvider({
     };
 
     // Optimistic UI render -> set the feedbackItems with the new element localy, as in the future will come from the api
-    //setFeedbackItems([...feedbackItems, newItem]);
+    setFeedbackItems([...feedbackItems, newItem]);
 
     // send it to server
     await fetch(GET_FEEDBACKS_URL, {
@@ -76,27 +77,6 @@ function FeedbackItemsContextProvider({
   const handleSelectCompany = (company: string) => {
     setSelectedCompany(company);
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(GET_FEEDBACKS_URL);
-        const data = await res.json();
-
-        if (!res.ok) {
-          throw new Error("Something went wrong");
-        }
-
-        setFeedbackItems(data.feedbacks);
-        setLoading(false);
-      } catch (error) {
-        setErrorMessage("Something went wring");
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
 
   return (
     <FeedbackItemsContext.Provider
